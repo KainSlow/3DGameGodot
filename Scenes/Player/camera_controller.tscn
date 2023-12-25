@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://cy4lr8ik7k20r"]
+
+[ext_resource type="Script" path="res://Scripts/Player/CameraController.cs" id="1_4qc0i"]
+
+[node name="CameraController" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("1_4qc0i")
+MouseSensitivity = 0.04
+JoyPadSensitivity = 2.0
+LookAheadRange = 15.0
+CameraDeadZoneY = 20.0
+
+[node name="YawPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="PitchPivot" type="Node3D" parent="YawPivot"]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="YawPivot/PitchPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)

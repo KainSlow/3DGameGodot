@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1p2e48ic3y0a"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_lspav"]
+size = Vector3(10, 2, 10)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_g3sba"]
+data = PackedVector3Array(-5, 1, 5, 5, 1, 5, -5, -1, 5, 5, 1, 5, 5, -1, 5, -5, -1, 5, 5, 1, -5, -5, 1, -5, 5, -1, -5, -5, 1, -5, -5, -1, -5, 5, -1, -5, 5, 1, 5, 5, 1, -5, 5, -1, 5, 5, 1, -5, 5, -1, -5, 5, -1, 5, -5, 1, -5, -5, 1, 5, -5, -1, -5, -5, 1, 5, -5, -1, 5, -5, -1, -5, 5, 1, 5, -5, 1, 5, 5, 1, -5, -5, 1, 5, -5, 1, -5, 5, 1, -5, -5, -1, 5, 5, -1, 5, -5, -1, -5, 5, -1, 5, 5, -1, -5, -5, -1, -5)
+
+[node name="Platform" type="MeshInstance3D" groups=["Ground"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.9852, 1.23233, -9.10551)
+mesh = SubResource("BoxMesh_lspav")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." groups=["Ground"]]
+collision_layer = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" groups=["Ground"]]
+shape = SubResource("ConcavePolygonShape3D_g3sba")

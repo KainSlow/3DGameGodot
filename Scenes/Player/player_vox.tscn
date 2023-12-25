@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6sid3darvrvj"]
+
+[ext_resource type="PackedScene" uid="uid://dcw1gultg4osy" path="res://3DModels/Player/PlayerVox.gltf" id="1_bvkt4"]
+
+[node name="PlayerVox" instance=ExtResource("1_bvkt4")]
+
+[node name="Head-Global" parent="World-Global/Body-Global" index="1"]
+transform = Transform3D(-1, 0, 1.50996e-07, 0, 1, 0, -1.50996e-07, 0, -1, 0, 11, 0)
+
+[node name="L_Foot-Global" parent="World-Global/Body-Global" index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 4.37101e-07, 0, -4.37101e-07, 1, 2, 5.68434e-14, -2.48463e-20)
+
+[node name="R_Foot-Global" parent="World-Global/Body-Global" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 0)
+
+[node name="R_Hand-Global" parent="World-Global/Body-Global" index="4"]
+transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 5, 3, -7.54979e-07)
+
+[node name="L_Hand-Global" parent="World-Global/Body-Global" index="5"]
+transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, -5.00059, 3, 7.55068e-07)
+
+[node name="Torso-Global" parent="World-Global/Body-Global" index="6"]
+transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, 4, 0)

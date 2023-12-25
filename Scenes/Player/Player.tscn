@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://dyasv1hd73pxi"]
+
+[ext_resource type="Script" path="res://Scripts/Player/Player.cs" id="1_mg40j"]
+[ext_resource type="PackedScene" uid="uid://cy36aygvs66pn" path="res://3DModels/gobot/gobot_skin.tscn" id="2_qmwkc"]
+[ext_resource type="PackedScene" uid="uid://dcw1gultg4osy" path="res://3DModels/Player/PlayerVox.gltf" id="2_tnolv"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_efysr"]
+radius = 0.3
+height = 1.3
+
+[node name="Player" type="RigidBody3D" groups=["Player"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 75.0
+lock_rotation = true
+linear_damp = 3.0
+script = ExtResource("1_mg40j")
+MovementSpeed = 1000.0
+
+[node name="GobotSkin" parent="." instance=ExtResource("2_qmwkc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+
+[node name="PlayerVox" parent="." groups=["Player"] instance=ExtResource("2_tnolv")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, -1, 0)
+visible = false
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." groups=["Player"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.35, 0)
+shape = SubResource("CapsuleShape3D_efysr")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
