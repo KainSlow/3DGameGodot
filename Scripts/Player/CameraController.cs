@@ -1,10 +1,10 @@
 using Godot;
 using System;
-using System.Dynamic;
-
+using System.Runtime;
 
 public partial class CameraController : Node3D
 {
+	[Export] public byte CollisionLayer {get; private set;} = 2;
 	[Export] public float CameraDelta {get; private set;} = 2f;
 	[Export] public float MouseSensitivity { get; private set; } = 0.001f;
 	[Export] public float JoyPadSensitivity {get; private set;} = 0.01f;
@@ -34,14 +34,10 @@ public partial class CameraController : Node3D
 	public override void _Ready()
 	{
 		_Camera = GetNode<Camera3D>("YawPivot/PitchPivot/Camera3D");
-
 		_YawPivot = GetNode("YawPivot") as Node3D;
 		_PitchPivot = GetNode("YawPivot/PitchPivot") as Node3D;
-
 		_Target = GetParent().GetNode("Player") as Player;
-
 		_currentCameraArmLength = _Camera.Position.Z;
-
 	}
 
 
@@ -86,21 +82,20 @@ public partial class CameraController : Node3D
 
 	private void MoveCameraPivot(){
 
-		Vector3 nextPosition = _Target.GlobalPosition + _Target.GetHorizontalVelocity()/LookAheadRange;
-		nextPosition.Y -= _Target.LinearVelocity.Y/(LookAheadRange*3f);
+		Vector3 nextPosition = _Target.GlobalPosition;
 
-		GlobalPosition = new Vector3(Mathf.Lerp(GlobalPosition.X, nextPosition.X, .4f),
-									 Mathf.Lerp(GlobalPosition.Y, nextPosition.Y, .4f),
-									 Mathf.Lerp(GlobalPosition.Z, nextPosition.Z, .4f));
-		
+		float w = .5f;
+
+		GlobalPosition = new Vector3(Mathf.Lerp(GlobalPosition.X, nextPosition.X, w),
+									_Target.GlobalPosition.Y,
+									Mathf.Lerp(GlobalPosition.Z, nextPosition.Z, w));
 
 	}
-
 	
 	public bool CheckForCollisionBetween(Vector3 start, Vector3 end){
 
 		var directState = GetWorld3D().DirectSpaceState;
-		var rayInfo = PhysicsRayQueryParameters3D.Create(start, end);
+		var rayInfo = PhysicsRayQueryParameters3D.Create(start, end, CollisionLayer);
 
 		var col = directState.IntersectRay(rayInfo);
 
@@ -124,7 +119,7 @@ public partial class CameraController : Node3D
 			_Camera.Position = 
 			new Vector3(0f,
 						0f,
-						Mathf.Lerp(_Camera.Position.Z, distanceToCollision, w));
+						Mathf.Lerp(_Camera.Position.Z, distanceToCollision - 1.0f, w));
 		}
 		else{
 
@@ -136,11 +131,10 @@ public partial class CameraController : Node3D
 
 			var currentCameraLocalPos = _Camera.Position;
 
-
 			if(currentCameraLocalPos.Z == _currentCameraArmLength) return;
 
 			var nextCameraLocalPos = new Vector3(_Camera.Position.X, _Camera.Position.Y,
-				Mathf.Lerp(currentCameraLocalPos.Z, _currentCameraArmLength, .05f));
+				Mathf.Lerp(currentCameraLocalPos.Z, _currentCameraArmLength - 1.0f, .0425f));
 
 			_Camera.Position = nextCameraLocalPos;
 
@@ -161,7 +155,7 @@ public partial class CameraController : Node3D
 	public void SetCameraObstacle(){
 
 		var directState = GetWorld3D().DirectSpaceState;
-		var rayInfo = PhysicsRayQueryParameters3D.Create(GlobalPosition, _Camera.GlobalPosition);
+		var rayInfo = PhysicsRayQueryParameters3D.Create(GlobalPosition, _Camera.GlobalPosition, CollisionLayer);
 		_CameraObstacle = directState.IntersectRay(rayInfo);
 	}
 

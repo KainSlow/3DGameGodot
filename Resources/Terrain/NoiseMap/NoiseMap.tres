@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="NoiseMapParams" load_steps=2 format=3 uid="uid://bpdfx0uet1ch1"]
+
+[ext_resource type="Script" path="res://Scripts/Utility/NoiseMapParams.cs" id="1_oudbr"]
+
+[resource]
+script = ExtResource("1_oudbr")
+Width = 290
+Height = 100
+Scale = 0.845
+Octaves = 1
+Persistance = 0.3
+Lacunarity = 2.03
+Seed = 12415
+Offset = Vector2(0, 0)

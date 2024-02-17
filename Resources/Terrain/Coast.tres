@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="TerrainType" load_steps=2 format=3 uid="uid://b3u0f5aw68j6"]
+
+[ext_resource type="Script" path="res://Scripts/Utility/TerrainType.cs" id="1_68wlq"]
+
+[resource]
+script = ExtResource("1_68wlq")
+name = "Coast"
+height = 0.675
+color = Color(0.909804, 0.564706, 0.427451, 1)

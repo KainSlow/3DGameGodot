@@ -8,6 +8,7 @@ public partial class Player : RigidBody3D
 	[Export] public float MovementSpeed { get; private set; } = 1400.0f;
 	[Export] public float RunSteerWeight {get; private set;} = 1.0f;
 	[Export] public float JumpForce { get; private set; } = 25.0f;
+	[Export] public float MaxJumpTime {get; private set; } = 0.5f;
 	public Node3D _YawPivot {get; private set;}
 
 	public AnimationNodeStateMachinePlayback _AnimationStateMachine {get; private set;}
@@ -68,6 +69,7 @@ public partial class Player : RigidBody3D
 	{
 		return Vector3.Up * JumpForce * Mass;
 	}
+
 	public Node3D GetPlayerMesh()
 	{
 		return _PlayerMesh;
@@ -105,6 +107,7 @@ public partial class Player : RigidBody3D
 		//_AnimPlayer = GetNode("PlayerVox/AnimationPlayer") as AnimationPlayer;
 		//_AnimPlayer = GetNode("GobotSkin/gobot/AnimationPlayer") as AnimationPlayer;
 		_AnimationTree = GetNode("GobotSkin/AnimationTree") as AnimationTree;
+		
 		_AnimationStateMachine = (AnimationNodeStateMachinePlayback)_AnimationTree.Get("parameters/StateMachine/playback");
 
 		_NoFriction = GD.Load<PhysicsMaterial>("res://PhysicsMaterials/Player_NoFriction.tres");
@@ -138,7 +141,6 @@ public partial class Player : RigidBody3D
         //Move Player
         _State.Update(this, (float)delta);
 
-		GD.Print(_State);
 
     }
 	public override void _PhysicsProcess(double delta)

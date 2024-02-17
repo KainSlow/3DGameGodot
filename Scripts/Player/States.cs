@@ -31,8 +31,7 @@ namespace PlayerNS //player namespace
 
         protected static bool IsTryingToJump()
         {
-            if(Input.GetActionRawStrength("Jump") == 0) return false;
-            return true;
+            return Input.GetActionRawStrength("Jump") >= 0.5f;
         }
 
         protected static bool IsTryingToRun()
@@ -96,7 +95,7 @@ namespace PlayerNS //player namespace
     {
         public override void Start(Player player)
         {
-            player.GravityScale = 1.0f;
+            player.GravityScale = 3.0f;
             player.SetNormalMaterial();
 
             if (IsTryingToMove(player))
@@ -157,7 +156,7 @@ namespace PlayerNS //player namespace
 
         public override void Update(Player player, float delta)
         {
-            if(IsTryingToJump()){
+            if(Input.IsActionJustPressed("Jump")){
                 player.StateTransition(States.Jumping);
             }
 
@@ -166,7 +165,7 @@ namespace PlayerNS //player namespace
                 Vector3 desireDirection = (player.GetYawPivotBasis() * player.GetMovementInput()).Normalized();
                 Vector3 currentDirection = (player.GetPlayerMesh().Basis * Vector3.Forward).Normalized();
 
-                if(desireDirection.Dot(currentDirection) < 0f){
+                if(desireDirection.Dot(currentDirection) < -0.25f){
                     
                     player.GetPlayerMesh().LookAt(player.GetPosition() + (player.GetPlayerMesh().Basis * Vector3.Back));
                     player.StateTransition(States.Falling);
@@ -232,26 +231,29 @@ namespace PlayerNS //player namespace
     }
     public class JumpingState : AirborneState
     {
+        float currentJumpTime = 0f;
         public override void Start(Player player)
         {
+            currentJumpTime = 0f;
             player.SetNoFrictionMaterial();
             player.GravityScale = 1.0f;
             player.LinearVelocity -= new Vector3(0.0f, player.LinearVelocity.Y, 0.0f);
             player.LinearDamp = 4f;
             player.ApplyCentralImpulse(player.GetJumpForce());
             player._AnimationStateMachine.Travel("Jump");
-
         }
 
         public override void Update(Player player, float delta)
         {
-            base.Update(player, delta);
+            currentJumpTime += delta;
 
-            if(player.LinearVelocity.Y < 0)
+            if(currentJumpTime >= player.MaxJumpTime || !IsTryingToJump())
             {
                 player._AnimationStateMachine.Travel("Fall");
                 player.StateTransition(States.Falling);
+                return;
             }
+
         }
     }
     public class FalllingState : AirborneState
@@ -282,15 +284,20 @@ namespace PlayerNS //player namespace
         private bool IsTryingToLedgeGrab(Player player){
             
             var directState = player.GetWorld3D().DirectSpaceState;
-            var directionBasis = player.GetPlayerMesh().Basis;
 
-            Vector3 forward = (directionBasis * Vector3.Forward).Normalized();
+            Basis directionBasis = player.GetPlayerMesh().Basis;
+
+            Vector3 forward = (player.GetYawPivotBasis() * player.GetMovementInput()).Normalized();
+
+            if(forward.LengthSquared() < .2f)
+
+                forward = (directionBasis * Vector3.Forward).Normalized();
 
             Vector3 hRayO = player.GlobalPosition - Vector3.Up * .55f;
             
-            Vector3 hRayTo = hRayO + forward * .4f;
+            Vector3 hRayTo = hRayO + forward.Normalized() * .4f;
 
-            var hRayQueryParameters = PhysicsRayQueryParameters3D.Create(hRayO, hRayTo);
+            var hRayQueryParameters = PhysicsRayQueryParameters3D.Create(hRayO, hRayTo, 2);
 
             var hCollision = directState.IntersectRay(hRayQueryParameters);
 
@@ -298,8 +305,8 @@ namespace PlayerNS //player namespace
             
             hCollision.TryGetValue("position", out var hPos);
 
-            Vector3 vRayO = (Vector3) hPos + Vector3.Up * 3f;
-            Vector3 vRayTo = vRayO + Vector3.Down * 3f;
+            Vector3 vRayO = (Vector3) hPos + Vector3.Up * .35f;
+            Vector3 vRayTo = vRayO + Vector3.Down * .35f;
 
             var vRayQueryParameters = PhysicsRayQueryParameters3D.Create(vRayO, vRayTo, 2);
 
@@ -309,7 +316,7 @@ namespace PlayerNS //player namespace
 
             vCollision.TryGetValue("position", out var vPos);
 
-            if((hRayO - (Vector3)vPos).Length() > .5f) return false;
+            if((hRayO - (Vector3)vPos).Length() > .55f) return false;
 
             /*
             MeshInstance3D mesh = new();
@@ -327,7 +334,10 @@ namespace PlayerNS //player namespace
         }
         public override void Start(Player player)
         {
-            player.GravityScale = 8.0f;
+            player.SetNoFrictionMaterial();
+            player.LinearDamp = 4f;
+
+            player.GravityScale = 7.0f;
 
             if(player._AnimationStateMachine.GetCurrentNode() != "Fall")
                 player._AnimationStateMachine.Travel("Fall");
@@ -340,6 +350,7 @@ namespace PlayerNS //player namespace
         public override void Update(Player player, float delta)
         {
             base.Update(player, delta);
+
         }
 
         public override void PhysicsUpdate(Player player, float delta)
