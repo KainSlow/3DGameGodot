@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="TerrainType" load_steps=2 format=3 uid="uid://b1fym6ievmyce"]
+
+[ext_resource type="Script" path="res://Scripts/Terrain/TerrainType.cs" id="1_5oxu2"]
+
+[resource]
+script = ExtResource("1_5oxu2")
+name = "HighLand"
+height = 0.7
+color = Color(0.0784314, 0.639216, 0.262745, 1)

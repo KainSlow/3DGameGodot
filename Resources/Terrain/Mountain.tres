@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="TerrainType" load_steps=2 format=3 uid="uid://djxlhj47v32ss"]
 
-[ext_resource type="Script" path="res://Scripts/Utility/TerrainType.cs" id="1_iebhj"]
+[ext_resource type="Script" path="res://Scripts/Terrain/TerrainType.cs" id="1_ttvnt"]
 
 [resource]
-script = ExtResource("1_iebhj")
+script = ExtResource("1_ttvnt")
 name = "Mountain"
-height = 0.95
-color = Color(0.592157, 0.745098, 0.858824, 1)
+height = 0.85
+color = Color(0.580392, 0.419608, 0.4, 1)
