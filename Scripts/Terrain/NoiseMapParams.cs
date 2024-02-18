@@ -6,26 +6,12 @@ using System.Reflection.Metadata;
 public partial class NoiseMapParams : Resource
 {
     public EventHandler OnValidated;
-    private int width;
-    private int height;
     private int octaves;
     private float scale;
     private float persistance;
     private float lacunarity;
     private int seed;
     private Vector2 offset;
-
-    [Export(PropertyHint.Range, "1, 1, 1, or_greater, or_greater, hide_slider")] 
-    public int Width{get => width; set{
-        width = value;
-        OnValidate(this, EventArgs.Empty);
-    }}
-    
-    [Export(PropertyHint.Range, "1, 1, 1, or_greater, or_greater, hide_slider")] 
-    public int Height{get => height; set{
-        height = value;
-        OnValidate(this, EventArgs.Empty);
-    }}
 
     [Export(PropertyHint.Range, "0.001f, 1f, 0.01f, min, or_greater, hide_slider")]
     public float Scale{get => scale; set{
@@ -57,7 +43,7 @@ public partial class NoiseMapParams : Resource
         OnValidate(this, EventArgs.Empty);
     }}
     
-    [Export] 
+    [Export]
     public Vector2 Offset{get => offset; set{
         offset = value;
         OnValidate(this, EventArgs.Empty);

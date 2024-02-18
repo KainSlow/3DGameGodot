@@ -4,11 +4,9 @@
 
 [resource]
 script = ExtResource("1_42i43")
-Width = 500
-Height = 500
-Scale = 0.79
-Octaves = 3
-Persistance = 0.312
-Lacunarity = 2.205
-Seed = 12415
-Offset = Vector2(50, 0)
+Scale = 20.89
+Octaves = 6
+Persistance = 0.5
+Lacunarity = 2.0
+Seed = 12
+Offset = Vector2(0, 0)

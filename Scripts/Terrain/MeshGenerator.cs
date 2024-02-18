@@ -84,7 +84,7 @@ public static class MeshGenerator
         }
 	}
 
-	public static MeshData GenerateTerrainMesh(float[,] heightMap, float heightMultiplier, Curve heightCurve){
+	public static MeshData GenerateTerrainMesh(float[,] heightMap, float heightMultiplier, Curve heightCurve, int levelOfDetail){
 
 		int width = heightMap.GetLength(0);
 		int height = heightMap.GetLength(1);
@@ -92,18 +92,21 @@ public static class MeshGenerator
 		float topLeftX = (width-1)/-2f;
 		float topLeftZ = (height-1)/2f;
 
-		MeshData meshData = new(width, height);
+		int meshSimplificationIncrement = (int)Mathf.Pow(2, levelOfDetail);
+		int verticesPerLine = ((width-1)/meshSimplificationIncrement) + 1;
+
+		MeshData meshData = new(verticesPerLine, verticesPerLine);
 		int vertexIndex = 0;
 
-		for(int y = 0; y < height;y++){
-			for(int x = 0; x < width; x++){
+		for(int y = 0; y < height;y+=meshSimplificationIncrement){
+			for(int x = 0; x < width; x+=meshSimplificationIncrement){
 
 				meshData.vertices[vertexIndex] = new Vector3(topLeftX + x, heightCurve.Sample(heightMap[x,y]) * heightMultiplier, topLeftZ - y);
 				meshData.uvs[vertexIndex] = new Vector2(x/(float)width, y/(float)height);
 
 				if(x < width - 1 && y < height - 1){
-					meshData.AddTriangle(vertexIndex, vertexIndex + width, vertexIndex + width + 1);
-					meshData.AddTriangle(vertexIndex + width + 1, vertexIndex + 1 ,vertexIndex );
+					meshData.AddTriangle(vertexIndex, vertexIndex + verticesPerLine, vertexIndex + verticesPerLine + 1);
+					meshData.AddTriangle(vertexIndex + verticesPerLine + 1, vertexIndex + 1 ,vertexIndex );
 				}
 
 				vertexIndex++;

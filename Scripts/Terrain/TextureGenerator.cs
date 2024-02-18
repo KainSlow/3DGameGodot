@@ -3,30 +3,29 @@ using Godot.Collections;
 
 public static class TextureGenerator 
 {
-	public static Image ImageFromColorMap(Color[] colorMap, int width, int height){
+	public static Image ImageFromColorMap(Color[] colorMap, int resolution){
 
 		byte[] colorData = ProjectUtils.FromColorToByteArray(colorMap);
 
-		Image image = Image.CreateFromData(width, height, false, Image.Format.Rgba8, colorData);
+		Image image = Image.CreateFromData(resolution, resolution, false, Image.Format.Rgba8, colorData);
 
 		return image;
 	}
 
 	public static Image ImageFromHeightMap(float[,] heightMap){
 
-		int width = heightMap.GetLength(0);
-		int height = heightMap.GetLength(1);
+		int resolution = heightMap.GetLength(0);
 
-		Color[] colorMap = new Color[width * height];
+		Color[] colorMap = new Color[resolution * resolution];
 
-		for(int y = 0; y < height; y++){
-			for(int x = 0; x < width; x++){
+		for(int y = 0; y < resolution; y++){
+			for(int x = 0; x < resolution; x++){
 
 				float colorValue = Mathf.Lerp(0f,1f, heightMap[x,y]);
-				colorMap[y*width + x] = new Color(colorValue, colorValue, colorValue);
+				colorMap[y*resolution + x] = new Color(colorValue, colorValue, colorValue);
 			}
 		}
 
-		return ImageFromColorMap(colorMap, width, height);
+		return ImageFromColorMap(colorMap, resolution);
 	}
 }

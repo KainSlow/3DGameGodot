@@ -11,11 +11,12 @@ LookAheadRange = 15.0
 CameraDeadZoneY = 20.0
 
 [node name="YawPivot" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
 
 [node name="PitchPivot" type="Node3D" parent="YawPivot"]
 transform = Transform3D(1, 0, 0, 0, 0.996195, 0.0871558, 0, -0.0871558, 0.996195, 0, 0, 0)
 
 [node name="Camera3D" type="Camera3D" parent="YawPivot/PitchPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+current = true
 near = 0.1

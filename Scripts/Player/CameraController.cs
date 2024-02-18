@@ -12,7 +12,7 @@ public partial class CameraController : Node3D
 	[Export] public float MinCameraArmLength{get; private set;} = 3f;
 	[Export] public float LookAheadRange {get; private set;} = 20f;
 	[Export] public float CameraDeadZoneY {get; private set;} = 10f;
-	Player _Target;
+	[Export] Player _Target;
 	float _yawInput = 0.0f;
 	float _pitchInput = 0.0f;
 	float _currentCameraArmLength;
@@ -36,8 +36,8 @@ public partial class CameraController : Node3D
 		_Camera = GetNode<Camera3D>("YawPivot/PitchPivot/Camera3D");
 		_YawPivot = GetNode("YawPivot") as Node3D;
 		_PitchPivot = GetNode("YawPivot/PitchPivot") as Node3D;
-		_Target = GetParent().GetNode("Player") as Player;
 		_currentCameraArmLength = _Camera.Position.Z;
+		(_Camera as Camera3D).Current = true;
 	}
 
 
