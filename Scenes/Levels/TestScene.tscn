@@ -92,9 +92,10 @@ contact_monitor = true
 linear_damp = 1.0
 MovementSpeed = 3000.0
 
-[node name="CameraController" parent="." instance=ExtResource("5_j5v5x")]
+[node name="CameraController" parent="." node_paths=PackedStringArray("_Target") instance=ExtResource("5_j5v5x")]
 MaxCameraArmLength = 10.0
 LookAheadRange = 1.0
+_Target = NodePath("../Player")
 
 [node name="Plane" type="MeshInstance3D" parent="." groups=["Ground"]]
 mesh = SubResource("PlaneMesh_2l8mb")

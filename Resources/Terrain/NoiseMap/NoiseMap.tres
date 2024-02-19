@@ -4,9 +4,9 @@
 
 [resource]
 script = ExtResource("1_42i43")
-Scale = 20.89
-Octaves = 6
-Persistance = 0.5
+Scale = 20.0
+Octaves = 4
+Persistance = 0.8
 Lacunarity = 2.0
-Seed = 12
+Seed = 0
 Offset = Vector2(0, 0)

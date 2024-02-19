@@ -14,7 +14,7 @@ namespace Utility{
             FastNoiseLite noise = new()
             {
                 NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin
-				//Seed = noiseParams.Seed
+				
             };
 			Vector2[] octavesOffsets = new Vector2[octaves];
 			for(int i = 0; i < octaves; i++){
@@ -40,8 +40,8 @@ namespace Utility{
 
 					for(int i = 0; i < octaves;i++){
 
-						float sampleX = (x-halfchunckSize) / scale * frequency + octavesOffsets[i].X;
-						float sampleY = (y-halfchunckSize) / scale * frequency + octavesOffsets[i].Y;
+						float sampleX = (x-halfchunckSize) / scale * frequency + octavesOffsets[i].X * frequency;
+						float sampleY = (y-halfchunckSize) / scale * frequency + octavesOffsets[i].Y * frequency;
 
 						float perlinValue = noise.GetNoise2D(sampleX, sampleY) * 2 - 1;
 

@@ -337,7 +337,7 @@ namespace PlayerNS //player namespace
             player.SetNoFrictionMaterial();
             player.LinearDamp = 4f;
 
-            player.GravityScale = 7.0f;
+            //player.GravityScale = 7.0f;
 
             if(player._AnimationStateMachine.GetCurrentNode() != "Fall")
                 player._AnimationStateMachine.Travel("Fall");

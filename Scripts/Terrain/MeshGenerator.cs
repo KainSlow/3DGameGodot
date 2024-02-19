@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public static class MeshGenerator
 {
-
 	public static Mesh GenerateSphereMesh(){
 
 		var surfaceArray = new Godot.Collections.Array();
@@ -96,6 +95,7 @@ public static class MeshGenerator
 		int verticesPerLine = ((width-1)/meshSimplificationIncrement) + 1;
 
 		MeshData meshData = new(verticesPerLine, verticesPerLine);
+		
 		int vertexIndex = 0;
 
 		for(int y = 0; y < height;y+=meshSimplificationIncrement){

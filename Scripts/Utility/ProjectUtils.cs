@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public static class ProjectUtils {
 
@@ -25,4 +24,55 @@ public static class ProjectUtils {
 		return bytes;
 	}
 
+	public static Vector3 Min(Vector3 vec, float value){
+
+		return new Vector3(
+			(vec.X < value)? vec.X: value,
+			(vec.Y < value)? vec.Y: value,
+			(vec.Z < value)? vec.Z: value
+		);
+	}
+
+	public static Vector3 Min(float value, Vector3 vec){
+		return Min(vec, value);
+	}
+
+	public static Vector3 Max(Vector3 vec, float value){
+		return new Vector3(
+			(vec.X > value)? vec.X: value,
+			(vec.Y > value)? vec.Y: value,
+			(vec.Z > value)? vec.Z: value
+		);
+	}
+
+	public static Vector3 Max(float value, Vector3 vec){
+		return Max(vec, value);
+	}
+
 }
+
+	public static class Extensions{
+		
+		public static float Distance(this Aabb box, Vector3 point){
+
+			Vector3 pointOnBounds = new Vector3(
+				Mathf.Clamp(point.X, box.Position.X, box.End.X),
+				Mathf.Clamp(point.Y, box.Position.Y, box.End.Y),
+				Mathf.Clamp(point.Z, box.Position.Z, box.End.Z)
+			);
+
+			return (point - pointOnBounds).Length();
+
+		}
+
+		public static float SqrDistance(this Aabb box, Vector3 point){
+
+			Vector3 pointOnBounds = new Vector3(
+				Mathf.Clamp(point.X, box.Position.X, box.End.X),
+				Mathf.Clamp(point.Y, box.Position.Y, box.End.Y),
+				Mathf.Clamp(point.Z, box.Position.Z, box.End.Z)
+			);
+
+			return (point - pointOnBounds).LengthSquared();
+		}
+	}

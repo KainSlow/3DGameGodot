@@ -10,7 +10,6 @@ public partial class Player : RigidBody3D
 	[Export] public float JumpForce { get; private set; } = 25.0f;
 	[Export] public float MaxJumpTime {get; private set; } = 0.5f;
 	public Node3D _YawPivot {get; private set;}
-
 	public AnimationNodeStateMachinePlayback _AnimationStateMachine {get; private set;}
 	public AnimationTree _AnimationTree {get; private set;}
 	Node3D _PlayerMesh;
@@ -82,6 +81,7 @@ public partial class Player : RigidBody3D
 	{
 		return new Vector3(LinearVelocity.X, 0f, LinearVelocity.Z) ;
 	}
+
 #endregion
 
 #region Setters
@@ -119,7 +119,7 @@ public partial class Player : RigidBody3D
 
 		_YawPivot = (Node3D)GetParent().GetNode("CameraController/YawPivot");
 
-		_State = States.Grounded;
+		_State = States.Falling;
 		_State.Start(this);
 
     }
