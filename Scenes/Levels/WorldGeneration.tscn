@@ -1,8 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://cmxauf6d32bqc"]
+[gd_scene load_steps=13 format=3 uid="uid://cmxauf6d32bqc"]
 
 [ext_resource type="Script" path="res://Scripts/Terrain/TerrainGenerator.cs" id="1_cofat"]
 [ext_resource type="Material" uid="uid://cwx22c57o1n7c" path="res://Materials/TerrainMat.tres" id="2_5hvmj"]
 [ext_resource type="Resource" uid="uid://bjjrfi3sbp4dj" path="res://Resources/Terrain/LODInfoGroup.tres" id="2_73ohs"]
+[ext_resource type="Curve" uid="uid://cn71xh1fy7qhr" path="res://Resources/Terrain/HeightCurve.tres" id="2_760km"]
+[ext_resource type="Resource" uid="uid://bpdfx0uet1ch1" path="res://Resources/Terrain/NoiseMap/NoiseMap.tres" id="3_6j0pg"]
 [ext_resource type="PackedScene" uid="uid://dyasv1hd73pxi" path="res://Scenes/Player/Player.tscn" id="3_xergi"]
 [ext_resource type="PackedScene" uid="uid://cy4lr8ik7k20r" path="res://Scenes/Player/camera_controller.tscn" id="4_u6udd"]
 [ext_resource type="Script" path="res://Scripts/Terrain/EndlessTerrain.cs" id="4_vyv3m"]
@@ -29,6 +31,8 @@ lod_bias = 0.001
 skeleton = NodePath("")
 script = ExtResource("1_cofat")
 AutoGenerate = true
+MeshHeightCurve = ExtResource("2_760km")
+NoiseParams = ExtResource("3_6j0pg")
 
 [node name="EndlessTerrainGenerator" type="Node3D" parent="." node_paths=PackedStringArray("viewer")]
 script = ExtResource("4_vyv3m")

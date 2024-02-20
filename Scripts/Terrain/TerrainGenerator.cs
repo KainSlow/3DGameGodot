@@ -72,7 +72,7 @@ public partial class TerrainGenerator : MeshInstance3D
     #region Godot Main Thread
 	public override void _Ready()
 	{
-        Mesh.Dispose();
+        Mesh?.Dispose();
         Mesh = null;
         Visible = false;
         //OnVariableChanged();
