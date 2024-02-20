@@ -48,31 +48,22 @@ public static class ProjectUtils {
 	public static Vector3 Max(float value, Vector3 vec){
 		return Max(vec, value);
 	}
-
 }
 
-	public static class Extensions{
+public static class Extensions{
 		
-		public static float Distance(this Aabb box, Vector3 point){
+	public static float Distance(this Aabb box, Vector3 point){
 
-			Vector3 pointOnBounds = new Vector3(
-				Mathf.Clamp(point.X, box.Position.X, box.End.X),
-				Mathf.Clamp(point.Y, box.Position.Y, box.End.Y),
-				Mathf.Clamp(point.Z, box.Position.Z, box.End.Z)
-			);
+		Vector3 pointOnBounds = point.Clamp(box.Position, box.End);
 
-			return (point - pointOnBounds).Length();
+		return (point - pointOnBounds).Length();
 
-		}
-
-		public static float SqrDistance(this Aabb box, Vector3 point){
-
-			Vector3 pointOnBounds = new Vector3(
-				Mathf.Clamp(point.X, box.Position.X, box.End.X),
-				Mathf.Clamp(point.Y, box.Position.Y, box.End.Y),
-				Mathf.Clamp(point.Z, box.Position.Z, box.End.Z)
-			);
-
-			return (point - pointOnBounds).LengthSquared();
-		}
 	}
+
+	public static float SqrDistance(this Aabb box, Vector3 point){
+
+		Vector3 pointOnBounds = point.Clamp(box.Position, box.End);
+
+		return (point - pointOnBounds).LengthSquared();
+	}
+}

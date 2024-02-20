@@ -31,7 +31,7 @@ public partial class EndlessTerrain : Node3D {
 
 		chunkVisibleInViewDst = Mathf.RoundToInt(maxViewDst/chunkSize);
 
-		terrainGenerator = GetNode<TerrainGenerator>("TerrainGenerator");
+		terrainGenerator = GetParent().GetNode<TerrainGenerator>("./TerrainGenerator");
 
 		UpdateVisibleChunks();
     }
@@ -123,10 +123,11 @@ public partial class EndlessTerrain : Node3D {
 		}
 
 		void OnMapDataReceived(MapData mapData){
+
 			this.mapData = mapData;
 			mapDataReceived = true; 
 
-			var texture = ImageTexture.CreateFromImage(TextureGenerator.ImageFromColorMap(mapData.colorMap, TerrainGenerator.mapChunkSize));
+			var texture = ImageTexture.CreateFromImage(TextureGenerator.ImageFromColorMap(mapData.colorMap, TerrainGenerator.mapChunkSize, TerrainGenerator.mapChunkSize));
 
 			meshObject.GetSurfaceOverrideMaterial(0).Set("albedo_texture", texture);
 
@@ -134,6 +135,7 @@ public partial class EndlessTerrain : Node3D {
 		}
 
 		void OnMeshDataReceived(MeshData meshData){
+			
 			meshObject.Mesh = meshData.CreateMesh();
 		}
 		public void UpdateTerrainChunk(){

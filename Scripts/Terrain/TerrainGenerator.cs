@@ -72,7 +72,10 @@ public partial class TerrainGenerator : MeshInstance3D
     #region Godot Main Thread
 	public override void _Ready()
 	{
-        OnVariableChanged();
+        Mesh.Dispose();
+        Mesh = null;
+        Visible = false;
+        //OnVariableChanged();
 	}
 
     public override void _Process(double delta)
@@ -110,6 +113,7 @@ public partial class TerrainGenerator : MeshInstance3D
     }
 
     private void MeshDataThread(Action<MeshData> callback, MapData mapData, int lod){
+
         MeshData meshData = MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, lod);
 
         lock (meshDataThreadInfoQueue){
@@ -222,9 +226,10 @@ public partial class TerrainGenerator : MeshInstance3D
             currentTexture = ImageTexture.CreateFromImage(TextureGenerator.ImageFromHeightMap(mapData.heightMap));
         }
         else if(drawMode == DrawMode.ColorMap){
-            currentTexture = ImageTexture.CreateFromImage(TextureGenerator.ImageFromColorMap(mapData.colorMap, mapChunkSize));
+            currentTexture = ImageTexture.CreateFromImage(TextureGenerator.ImageFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize));
         }
         else if(drawMode == DrawMode.Mesh){
+
             Mesh = MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorLevelOfDetal).CreateMesh();
         }
     }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://cmxauf6d32bqc"]
+[gd_scene load_steps=11 format=3 uid="uid://cmxauf6d32bqc"]
 
 [ext_resource type="Script" path="res://Scripts/Terrain/TerrainGenerator.cs" id="1_cofat"]
 [ext_resource type="Material" uid="uid://cwx22c57o1n7c" path="res://Materials/TerrainMat.tres" id="2_5hvmj"]
@@ -7,9 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://cy4lr8ik7k20r" path="res://Scenes/Player/camera_controller.tscn" id="4_u6udd"]
 [ext_resource type="Script" path="res://Scripts/Terrain/EndlessTerrain.cs" id="4_vyv3m"]
 [ext_resource type="Script" path="res://Scripts/Utility/DrawController.gd" id="7_0hr5j"]
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_chjtv"]
-size = Vector2(257, 257)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_p2jbf"]
 sky_top_color = Color(0.145098, 0.364706, 1, 1)
@@ -26,18 +23,18 @@ sky = SubResource("Sky_162kg")
 
 [node name="World" type="Node3D"]
 
+[node name="TerrainGenerator" type="MeshInstance3D" parent="."]
+visible = false
+lod_bias = 0.001
+skeleton = NodePath("")
+script = ExtResource("1_cofat")
+AutoGenerate = true
+
 [node name="EndlessTerrainGenerator" type="Node3D" parent="." node_paths=PackedStringArray("viewer")]
 script = ExtResource("4_vyv3m")
 detailLevels = ExtResource("2_73ohs")
 viewer = NodePath("../Player")
 mat = ExtResource("2_5hvmj")
-
-[node name="TerrainGenerator" type="MeshInstance3D" parent="EndlessTerrainGenerator"]
-visible = false
-mesh = SubResource("PlaneMesh_chjtv")
-skeleton = NodePath("")
-surface_material_override/0 = ExtResource("2_5hvmj")
-script = ExtResource("1_cofat")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.760406, 0.157116, -0.630157, 0, 0.970296, 0.241922, 0.649448, -0.183959, 0.737819, -198.802, 2.174, 184.651)
@@ -53,7 +50,7 @@ environment = SubResource("Environment_7ci86")
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 350, 0)
 
 [node name="Player" parent="." instance=ExtResource("3_xergi")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.547, 10, 12.059)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3926, 213.362, -0.101583)
 gravity_scale = 0.0
 MovementSpeed = 200000.0
 

@@ -98,15 +98,15 @@ public static class MeshGenerator
 		
 		int vertexIndex = 0;
 
-		for(int y = 0; y < height;y+=meshSimplificationIncrement){
-			for(int x = 0; x < width; x+=meshSimplificationIncrement){
+		for(int y = height - 1; y >= 0; y -= meshSimplificationIncrement){
+			for(int x = 0; x < width; x += meshSimplificationIncrement){
 
-				meshData.vertices[vertexIndex] = new Vector3(topLeftX + x, heightCurve.Sample(heightMap[x,y]) * heightMultiplier, topLeftZ - y);
-				meshData.uvs[vertexIndex] = new Vector2(x/(float)width, y/(float)height);
+				meshData.vertices[vertexIndex] = new Vector3(topLeftX + x, heightCurve.Sample(heightMap[x,y]) * heightMultiplier,  y - topLeftZ );
+				meshData.uvs[vertexIndex] = new Vector2(x/(float)width, (float)y/height);
 
-				if(x < width - 1 && y < height - 1){
+				if(x < width - 1 && y > 0){
 					meshData.AddTriangle(vertexIndex, vertexIndex + verticesPerLine, vertexIndex + verticesPerLine + 1);
-					meshData.AddTriangle(vertexIndex + verticesPerLine + 1, vertexIndex + 1 ,vertexIndex );
+					meshData.AddTriangle(vertexIndex + verticesPerLine + 1, vertexIndex + 1 , vertexIndex);
 				}
 
 				vertexIndex++;

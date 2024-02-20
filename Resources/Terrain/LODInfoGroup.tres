@@ -6,7 +6,7 @@
 [sub_resource type="Resource" id="Resource_k858r"]
 script = ExtResource("1_s66xi")
 lod = 3
-visibleDstThreshold = 350.0
+visibleDstThreshold = 200.0
 
 [sub_resource type="Resource" id="Resource_kv3fe"]
 script = ExtResource("1_s66xi")
@@ -16,17 +16,17 @@ visibleDstThreshold = 400.0
 [sub_resource type="Resource" id="Resource_qm4pr"]
 script = ExtResource("1_s66xi")
 lod = 5
-visibleDstThreshold = 500.0
+visibleDstThreshold = 600.0
 
 [sub_resource type="Resource" id="Resource_ft4ki"]
 script = ExtResource("1_s66xi")
 lod = 6
-visibleDstThreshold = 1000.0
+visibleDstThreshold = 800.0
 
 [sub_resource type="Resource" id="Resource_rs2kw"]
 script = ExtResource("1_s66xi")
 lod = 7
-visibleDstThreshold = 1500.0
+visibleDstThreshold = 1000.0
 
 [sub_resource type="Resource" id="Resource_2s1py"]
 script = ExtResource("1_s66xi")
