@@ -18,6 +18,8 @@ public partial class Player : RigidBody3D
 	public PhysicsMaterial _NormalFriction {get; private set;}
 	public PhysicsMaterial _HighFriction {get; private set;}
 
+	bool inDebugMode;
+
 #region Getters
 
 	public State GetState(){
@@ -121,7 +123,6 @@ public partial class Player : RigidBody3D
 
 		_State = States.Falling;
 		_State.Start(this);
-
     }
 	public override void _Process(double delta)
 	{
@@ -139,15 +140,17 @@ public partial class Player : RigidBody3D
 		}
 
         //Move Player
-        _State.Update(this, (float)delta);
+		if(!inDebugMode) 
+        	_State.Update(this, (float)delta);
 
+		UpdateDebugMode((float)delta);
 
     }
 	public override void _PhysicsProcess(double delta)
     {
 		base._PhysicsProcess(delta);
-
-		_State.PhysicsUpdate(this, (float)delta);
+		if(!inDebugMode) 
+			_State.PhysicsUpdate(this, (float)delta);
     }
 
     public void StateTransition(State nextState)
@@ -157,7 +160,36 @@ public partial class Player : RigidBody3D
 		_State.Start(this);
 	}
 
-	public void OnBodyEntered(Node body){
+    public override void _Input(InputEvent @event)
+    {
+        base._Input(@event);
+
+		if(@event is InputEventKey){
+			if(Input.IsKeyPressed(Key.O)){
+				SetDebugMode();
+			}
+		}
+    }
+
+	void SetDebugMode(){
+		GravityScale = 0f;
+		inDebugMode = true;
+		_AnimationStateMachine.Start("Idle");
+	}
+
+	void UpdateDebugMode(float delta){
+
+		Vector3 desireDirection = (_YawPivot.Basis * GetMovementInput()).Normalized();
+
+		float yDirection = Input.IsKeyPressed(Key.Space)? 1 : Input.IsKeyPressed(Key.Ctrl)? -1 :0;
+
+		desireDirection.Y = yDirection * 2;
+
+		ApplyCentralForce(desireDirection * MovementSpeed);
+
+	}
+
+    public void OnBodyEntered(Node body){
 		
 	}
 }

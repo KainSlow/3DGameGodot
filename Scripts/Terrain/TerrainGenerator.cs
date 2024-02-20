@@ -164,7 +164,7 @@ public partial class TerrainGenerator : MeshInstance3D
         if(Mesh == null){ GD.Print("No Mesh Found"); return; }
 
         var material = GetSurfaceOverrideMaterial(0);
-        material.Set("albedo_texture", currentTexture);
+        material?.Set("albedo_texture", currentTexture);
         //material.Set("texture_filter", "Nearest");
     }
     public void OnVariableChanged(){
