@@ -17,6 +17,8 @@ public partial class TerrainGenerator : MeshInstance3D
     private float meshHeightMultiplier = 60;
     private Texture2D currentTexture;
     private int editorLevelOfDetal;
+
+
     [Export] public const int mapChunkSize = 257;
     private Color[] colorMap;
 
@@ -55,18 +57,18 @@ public partial class TerrainGenerator : MeshInstance3D
         LoadFromDataFile();
     }}
     [Export(PropertyHint.File, "*.png")] public string ImagePath{get; set;} = "res://NoiseImages/TerrainImage.png";
-
+    [Export] Material DefaultMaterial {get; set;} = ResourceLoader.Load<Material>("res://Materials/DefaultTerrainMat.tres");
 
     [Export(PropertyHint.Range, "0.001f, 1f, min, or_greater, hide_slider")] 
     public float MeshHeightMultiplier {get => meshHeightMultiplier; set{
         meshHeightMultiplier = value;
         if(AutoGenerate) OnVariableChanged();
     }} 
-    [Export] Curve meshHeightCurve {get; set;} = GD.Load<Curve>("res://Resources/Terrain/HeightCurve.tres");
+    [Export] Curve MeshHeightCurve {get; set;} = ResourceLoader.Load<Curve>("res://Resources/Terrain/HeightCurve.tres");
     
-    [Export] public NoiseMapParams NoiseParams {get; set;} = GD.Load<NoiseMapParams>("res://Resources/Terrain/NoiseMap/NoiseMap.tres");
+    [Export] public NoiseMapParams NoiseParams {get; set;} = ResourceLoader.Load<NoiseMapParams>("res://Resources/Terrain/NoiseMap/DefaulNoiseMapParams.tres");
 
-    [Export] public TerrainGroup terrainGroup{get; set;} = GD.Load<TerrainGroup>("res://Resources/Terrain/DefaultTerrainGroup.tres");
+    [Export] public TerrainGroup Terrains{get; set;} = ResourceLoader.Load<TerrainGroup>("res://Resources/Terrain/DefaultTerrainGroup.tres");
 
     #endregion
     #region Godot Main Thread
@@ -76,6 +78,8 @@ public partial class TerrainGenerator : MeshInstance3D
         Mesh = null;
         Visible = false;
         //OnVariableChanged();
+
+
 	}
 
     public override void _Process(double delta)
@@ -85,17 +89,17 @@ public partial class TerrainGenerator : MeshInstance3D
 
     #endregion
     #region Custom Threading
-    public void RequestMapData(Action<MapData> callback){
+    public void RequestMapData(Action<MapData> callback, Vector2 additionalOffset){
 
         ThreadStart threadStart = delegate{
-            MapDataThread(callback);
+            MapDataThread(callback, additionalOffset);
         };
 
         new Thread(threadStart).Start();
     }
-    private void MapDataThread(Action<MapData> callback){
+    private void MapDataThread(Action<MapData> callback, Vector2 additionalOffset){
 
-        MapData mapData = GenerateMapData();
+        MapData mapData = GenerateMapData(additionalOffset);
 
         lock (mapDataThreadInfoQueue)
         {
@@ -114,7 +118,7 @@ public partial class TerrainGenerator : MeshInstance3D
 
     private void MeshDataThread(Action<MeshData> callback, MapData mapData, int lod){
 
-        MeshData meshData = MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, lod);
+        MeshData meshData = MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, MeshHeightCurve, lod);
 
         lock (meshDataThreadInfoQueue){
             
@@ -152,7 +156,8 @@ public partial class TerrainGenerator : MeshInstance3D
 
     #region Helpers
     private void LoadFromDataFile(){
-        currentTexture = GD.Load<Texture2D>(ImagePath);
+        if(!Engine.IsEditorHint()) return;
+        currentTexture = ResourceLoader.Load<Texture2D>(ImagePath);
         SetImageTexture();
     }
     private void SaveToDataFile(){
@@ -164,23 +169,32 @@ public partial class TerrainGenerator : MeshInstance3D
         if(Mesh == null){ GD.Print("No Mesh Found"); return; }
 
         var material = GetSurfaceOverrideMaterial(0);
+
+        if(material == null){
+            SetSurfaceOverrideMaterial(0, (Material)DefaultMaterial.Duplicate());
+        }
+
         material?.Set("albedo_texture", currentTexture);
         //material.Set("texture_filter", "Nearest");
     }
     public void OnVariableChanged(){
 
-        if(Engine.IsEditorHint())
-            DrawMapInEditor();
+        if(!Engine.IsEditorHint()) return;
+
+        DrawMapInEditor();
         SetImageTexture();
     }
     public void OnVariableChanged(object sender, EventArgs e){
-        if(Engine.IsEditorHint())
-            DrawMapInEditor();
+        if(!Engine.IsEditorHint())return;
+
+        DrawMapInEditor();
         SetImageTexture();
     }
-    private float[,] GenerateNoiseMap(){
+    private float[,] GenerateNoiseMap(Vector2 additionalOffset){
 
-        float[,] noiseMap = Utility.NoiseGenerator.GenerateNoiseMap(NoiseParams, mapChunkSize);
+
+        //float[,] noiseMap = Utility.NoiseGenerator.GenerateNoiseMap((NoiseMapParams)NoiseParams.Duplicate(), mapChunkSize, additionalOffset);
+        float[,] noiseMap = Utility.NoiseGenerator.GenerateNoiseMap(NoiseParams.Scale, NoiseParams.Octaves, NoiseParams.Persistance, NoiseParams.Lacunarity, NoiseParams.Seed, mapChunkSize, NoiseParams.Offset +additionalOffset);
 
         if(Engine.IsEditorHint()){
 
@@ -194,9 +208,9 @@ public partial class TerrainGenerator : MeshInstance3D
 
         return noiseMap;
     }
-    private MapData GenerateMapData(){
+    private MapData GenerateMapData(Vector2 additionalOffset){
 
-        float[,] noiseMap = GenerateNoiseMap();
+        float[,] noiseMap = GenerateNoiseMap(additionalOffset);
 
         Color[] colorMap = new Color[mapChunkSize * mapChunkSize];
 
@@ -206,10 +220,10 @@ public partial class TerrainGenerator : MeshInstance3D
                 
                 float currentHeight = noiseMap[x,y];
 
-                for(int i = 0; i < terrainGroup.regions.Length; i++){
+                for(int i = 0; i < Terrains.regions.Length; i++){
                     
-                    if(currentHeight <= terrainGroup.regions[i].height){
-                        colorMap[y * mapChunkSize + x] = terrainGroup.regions[i].color;
+                    if(currentHeight <= Terrains.regions[i].height){
+                        colorMap[y * mapChunkSize + x] = Terrains.regions[i].color;
                         break;
                     }
 
@@ -220,7 +234,7 @@ public partial class TerrainGenerator : MeshInstance3D
     }
     private void DrawMapInEditor(){
         
-        MapData mapData = GenerateMapData();
+        MapData mapData = GenerateMapData(Vector2.Zero);
 
         if(drawMode == DrawMode.NoiseMap){
             currentTexture = ImageTexture.CreateFromImage(TextureGenerator.ImageFromHeightMap(mapData.heightMap));
@@ -230,7 +244,7 @@ public partial class TerrainGenerator : MeshInstance3D
         }
         else if(drawMode == DrawMode.Mesh){
 
-            Mesh = MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorLevelOfDetal).CreateMesh();
+            Mesh = MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, MeshHeightCurve, editorLevelOfDetal).CreateMesh();
         }
     }
     #endregion

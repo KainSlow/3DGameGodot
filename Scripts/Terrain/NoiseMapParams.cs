@@ -2,7 +2,8 @@ using Godot;
 using System;
 using System.Reflection.Metadata;
 
-[GlobalClass, Tool, Serializable]
+[GlobalClass]
+[Tool]
 public partial class NoiseMapParams : Resource
 {
     public EventHandler OnValidated;

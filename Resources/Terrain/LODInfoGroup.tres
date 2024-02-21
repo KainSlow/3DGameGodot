@@ -1,38 +1,38 @@
-[gd_resource type="Resource" script_class="LODInfoGroup" load_steps=9 format=3 uid="uid://bjjrfi3sbp4dj"]
+[gd_resource type="Resource" script_class="LODInfoGroup" load_steps=9 format=3 uid="uid://cyt1hemxhrikx"]
 
-[ext_resource type="Script" path="res://Scripts/Terrain/LODInfo.cs" id="1_s66xi"]
-[ext_resource type="Script" path="res://Scripts/Terrain/LODInfoGroup.cs" id="2_aqs3i"]
+[ext_resource type="Script" path="res://Scripts/Terrain/LODInfo.cs" id="1_rud7u"]
+[ext_resource type="Script" path="res://Scripts/Terrain/LODInfoGroup.cs" id="2_i6isr"]
 
 [sub_resource type="Resource" id="Resource_k858r"]
-script = ExtResource("1_s66xi")
+script = ExtResource("1_rud7u")
 lod = 3
 visibleDstThreshold = 200.0
 
 [sub_resource type="Resource" id="Resource_kv3fe"]
-script = ExtResource("1_s66xi")
+script = ExtResource("1_rud7u")
 lod = 4
 visibleDstThreshold = 400.0
 
 [sub_resource type="Resource" id="Resource_qm4pr"]
-script = ExtResource("1_s66xi")
+script = ExtResource("1_rud7u")
 lod = 5
 visibleDstThreshold = 600.0
 
 [sub_resource type="Resource" id="Resource_ft4ki"]
-script = ExtResource("1_s66xi")
+script = ExtResource("1_rud7u")
 lod = 6
 visibleDstThreshold = 800.0
 
 [sub_resource type="Resource" id="Resource_rs2kw"]
-script = ExtResource("1_s66xi")
+script = ExtResource("1_rud7u")
 lod = 7
 visibleDstThreshold = 1000.0
 
 [sub_resource type="Resource" id="Resource_2s1py"]
-script = ExtResource("1_s66xi")
+script = ExtResource("1_rud7u")
 lod = 8
-visibleDstThreshold = 3000.0
+visibleDstThreshold = 1200.0
 
 [resource]
-script = ExtResource("2_aqs3i")
+script = ExtResource("2_i6isr")
 LODInfos = [SubResource("Resource_k858r"), SubResource("Resource_kv3fe"), SubResource("Resource_qm4pr"), SubResource("Resource_ft4ki"), SubResource("Resource_rs2kw"), SubResource("Resource_2s1py")]

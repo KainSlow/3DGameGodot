@@ -1,14 +1,20 @@
-[gd_resource type="Resource" script_class="TerrainGroup" load_steps=9 format=3 uid="uid://1qnvwlvcfdgy"]
+[gd_resource type="Resource" script_class="TerrainGroup" load_steps=10 format=3 uid="uid://buikq5kjd7ani"]
 
-[ext_resource type="Resource" uid="uid://bod3ubhri51xv" path="res://Resources/Terrain/DeepWater.tres" id="1_hi3t3"]
-[ext_resource type="Script" path="res://Scripts/Terrain/TerrainGroup.cs" id="1_tndps"]
-[ext_resource type="Resource" uid="uid://laoo38xo1w11" path="res://Resources/Terrain/Water.tres" id="2_3j0lp"]
-[ext_resource type="Resource" uid="uid://b3u0f5aw68j6" path="res://Resources/Terrain/Coast.tres" id="3_asmh8"]
-[ext_resource type="Resource" uid="uid://dt326n8y18pqv" path="res://Resources/Terrain/Land.tres" id="4_4q3fw"]
-[ext_resource type="Resource" uid="uid://b1fym6ievmyce" path="res://Resources/Terrain/HighLand.tres" id="5_32rei"]
-[ext_resource type="Resource" uid="uid://djxlhj47v32ss" path="res://Resources/Terrain/Mountain.tres" id="5_f4sx8"]
-[ext_resource type="Resource" uid="uid://b2mfeuak0intj" path="res://Resources/Terrain/MountainPeak.tres" id="6_cfju8"]
+[ext_resource type="Resource" uid="uid://bod3ubhri51xv" path="res://Resources/Terrain/TerrainType/DeepWater.tres" id="1_4pkyc"]
+[ext_resource type="Script" path="res://Scripts/Terrain/TerrainType.cs" id="2_sybcq"]
+[ext_resource type="Resource" uid="uid://b3u0f5aw68j6" path="res://Resources/Terrain/TerrainType/Coast.tres" id="3_ds0xu"]
+[ext_resource type="Resource" uid="uid://dt326n8y18pqv" path="res://Resources/Terrain/TerrainType/Land.tres" id="4_egpcw"]
+[ext_resource type="Resource" uid="uid://b1fym6ievmyce" path="res://Resources/Terrain/TerrainType/HighLand.tres" id="5_l1hch"]
+[ext_resource type="Resource" uid="uid://djxlhj47v32ss" path="res://Resources/Terrain/TerrainType/Mountain.tres" id="6_ie8cc"]
+[ext_resource type="Resource" uid="uid://b2mfeuak0intj" path="res://Resources/Terrain/TerrainType/MountainPeak.tres" id="7_ldrgi"]
+[ext_resource type="Script" path="res://Scripts/Terrain/TerrainGroup.cs" id="8_fdb2o"]
+
+[sub_resource type="Resource" id="Resource_sc37c"]
+script = ExtResource("2_sybcq")
+name = "Water"
+height = 0.4
+color = Color(0.117647, 0.352941, 0.807843, 1)
 
 [resource]
-script = ExtResource("1_tndps")
-regions = [ExtResource("1_hi3t3"), ExtResource("2_3j0lp"), ExtResource("3_asmh8"), ExtResource("4_4q3fw"), ExtResource("5_32rei"), ExtResource("5_f4sx8"), ExtResource("6_cfju8")]
+script = ExtResource("8_fdb2o")
+regions = [ExtResource("1_4pkyc"), SubResource("Resource_sc37c"), ExtResource("3_ds0xu"), ExtResource("4_egpcw"), ExtResource("5_l1hch"), ExtResource("6_ie8cc"), ExtResource("7_ldrgi")]

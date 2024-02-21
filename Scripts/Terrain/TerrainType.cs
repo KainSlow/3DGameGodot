@@ -1,7 +1,8 @@
 using Godot;
 using System;
 
-[GlobalClass, Tool]
+[GlobalClass]
+[Tool]
 public partial class TerrainType : Resource
 {
     [Export] public string name;

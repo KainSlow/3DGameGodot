@@ -6,7 +6,7 @@ public partial class EndlessTerrain : Node3D {
 
 	#region Exports & Variables
 
-	const float viewerMoveThresholdForChunkUpdate = 50f;
+	const float viewerMoveThresholdForChunkUpdate = 25f;
 	const float sqrViewerMoveThresholdForChunkUpdate = viewerMoveThresholdForChunkUpdate * viewerMoveThresholdForChunkUpdate;
 	int chunkSize;
 	int chunkVisibleInViewDst;
@@ -64,6 +64,7 @@ public partial class EndlessTerrain : Node3D {
 				Vector2 viewedChunkCoord = new Vector2(currentChunkCoordX + xOffset, currentChunkCoordY + yOffset);
 
 				if(terrainChunkDictionary.ContainsKey(viewedChunkCoord)){
+
 					terrainChunkDictionary[viewedChunkCoord].UpdateTerrainChunk();
 
 					if(terrainChunkDictionary[viewedChunkCoord].IsVisible()){
@@ -71,14 +72,16 @@ public partial class EndlessTerrain : Node3D {
 					}
 				}
 				else{
+
 					terrainChunkDictionary.Add(viewedChunkCoord, new TerrainChunk(viewedChunkCoord, chunkSize, detailLevels.LODInfos, mat));
 					AddChild(terrainChunkDictionary[viewedChunkCoord].meshObject);
+				
 				}
 			}
 		}
 	}
 	public class TerrainChunk {
-		
+
 		public MeshInstance3D meshObject;
 		Vector2 position;	
 		Aabb bounds;
@@ -91,15 +94,13 @@ public partial class EndlessTerrain : Node3D {
 		public TerrainChunk(Vector2 coord, int size, LODInfo[] detailLevels, Material material){
 
 			this.detailLevels = detailLevels;
-
 			position = coord * size;	
 			Vector3 positionV3 = new Vector3(position.X, 0, position.Y);
 			bounds = new Aabb(positionV3, new Vector3(size, 0, size));
 
-
             meshObject = new()
             {
-				Name = "TerrainChunk",
+				//Name = "TerrainChunk",
 
                 Mesh = new PlaneMesh
                 {
@@ -109,9 +110,9 @@ public partial class EndlessTerrain : Node3D {
                 Position = positionV3
             };
 
-			meshObject.SetSurfaceOverrideMaterial(0, material);
+			Material localMat = (Material)material.Duplicate();
 			
-			SetVisible(false);
+			meshObject.SetSurfaceOverrideMaterial(0, localMat);
 
 			lodMeshes = new LODMesh[detailLevels.Length];
 
@@ -119,60 +120,60 @@ public partial class EndlessTerrain : Node3D {
 				lodMeshes[i] = new LODMesh(detailLevels[i].lod, UpdateTerrainChunk);
 			}
 
-			terrainGenerator.RequestMapData(OnMapDataReceived);
+			terrainGenerator.RequestMapData(OnMapDataReceived, position);
+			SetVisible(false);
 		}
 
 		void OnMapDataReceived(MapData mapData){
 
 			this.mapData = mapData;
+
 			mapDataReceived = true; 
 
 			var texture = ImageTexture.CreateFromImage(TextureGenerator.ImageFromColorMap(mapData.colorMap, TerrainGenerator.mapChunkSize, TerrainGenerator.mapChunkSize));
+			//var texture = ImageTexture.CreateFromImage(TextureGenerator.ImageFromHeightMap(mapData.heightMap));
 
-			meshObject.GetSurfaceOverrideMaterial(0).Set("albedo_texture", texture);
+			this.meshObject.GetSurfaceOverrideMaterial(0).Set("albedo_texture", texture);
 
 			UpdateTerrainChunk();
 		}
 
-		void OnMeshDataReceived(MeshData meshData){
-			
-			meshObject.Mesh = meshData.CreateMesh();
-		}
 		public void UpdateTerrainChunk(){
 
 			if(!mapDataReceived) return;
 
 			float viewerDstFromNearestEdge = bounds.Distance(new Vector3(viewerPosition.X, 0f, viewerPosition.Y));
-			//float viewerDstFromNearestEdge = (new Vector3(viewerPosition.X, 0f, viewerPosition.Y) - bounds.Position).Length();
-
 			
 			bool visible = viewerDstFromNearestEdge <= maxViewDst;
 
-			if(visible){
-				int lodIndex = 0;
+			if(!visible)return;
 
-				for(int i = 0; i < detailLevels.Length - 1; i++){
+			int lodIndex = 0;
 
-					if(viewerDstFromNearestEdge <= detailLevels[i].visibleDstThreshold){
-						break;
-					}
+			for(int i = 0; i < detailLevels.Length - 1; i++){
 
-					lodIndex = i+1;
-					
+				if(viewerDstFromNearestEdge <= detailLevels[i].visibleDstThreshold){
+					break;
 				}
 
-				if(lodIndex != previousLODIndex){
-					LODMesh lodMesh = lodMeshes[lodIndex];
-					if(lodMesh.hasMesh){
-						previousLODIndex = lodIndex;
-						meshObject.Mesh = lodMesh.mesh;
-					}
-					else if(!lodMesh.hasRequestedMesh){
-						lodMesh.RequestMesh(mapData);
-					}
-				}
+				lodIndex = i+1;
+				
 			}
 
+			if(lodIndex != previousLODIndex){
+
+				LODMesh lodMesh = lodMeshes[lodIndex];
+				if(lodMesh.hasMesh){
+
+					previousLODIndex = lodIndex;
+					meshObject.Mesh = lodMesh.mesh;
+				
+				}
+				else if(!lodMesh.hasRequestedMesh){
+					lodMesh.RequestMesh(mapData);
+				}
+			}
+			
 
 			SetVisible(visible);
 		}
@@ -202,6 +203,7 @@ public partial class EndlessTerrain : Node3D {
 			this.updateCallback = updateCallback;
 		}
 		void OnMeshDataReceived(MeshData meshData){
+
 			mesh = meshData.CreateMesh();
 			hasMesh = true;
 
