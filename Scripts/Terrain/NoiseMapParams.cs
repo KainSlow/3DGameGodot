@@ -1,9 +1,8 @@
 using Godot;
 using System;
-using System.Reflection.Metadata;
 
-[GlobalClass]
 [Tool]
+[GlobalClass]
 public partial class NoiseMapParams : Resource
 {
     public EventHandler OnValidated;
@@ -54,4 +53,16 @@ public partial class NoiseMapParams : Resource
         EventHandler handler = OnValidated;
         handler?.Invoke(sender, e);
     }
+
+    public NoiseMapParams(){
+        
+        octaves = 1;
+        scale = 1;
+        persistance = .5f;
+        lacunarity = 2f;
+        seed = 0;
+        offset = Vector2.Zero;
+
+    }
+
 }

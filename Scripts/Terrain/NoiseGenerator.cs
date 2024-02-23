@@ -4,81 +4,9 @@ using Godot;
 namespace Utility{
 	public static class NoiseGenerator 
 	{
-		public static float[,] GenerateNoiseMap(NoiseMapParams noiseParams, int chunkSize, Vector2 additionalOffset)
-		{	
-			//GD.Print("Noise Origin:", noiseParams.Offset);
 
-			noiseParams.Offset += additionalOffset;
-
-			//GD.Print("Noise Offset:", noiseParams.Offset);
-
-			int octaves = noiseParams.Octaves;
-			float scale = noiseParams.Scale;
-
-			Random prng = new(noiseParams.Seed);
-			
-            FastNoiseLite noise = new()
-            {
-                NoiseType = FastNoiseLite.NoiseTypeEnum.Simplex,
-				Seed = noiseParams.Seed
-            };
-
-			Vector2[] octavesOffsets = new Vector2[octaves];
-			for(int i = 0; i < octaves; i++){
-				float offsetX = prng.Next(-100000, 100000) + noiseParams.Offset.X;
-				float offsetY = prng.Next(-100000, 100000) + noiseParams.Offset.Y;
-				octavesOffsets[i] = new Vector2(offsetX, offsetY);
-			}
-
-			float maxNoisechunckSize = float.MinValue;
-			float minNoisechunckSize = float.MaxValue;
-
-			float halfchunckSize = chunkSize/2f;
-
-            float[,] noiseMap = new float[chunkSize, chunkSize];
-
-			for(int y = 0; y < chunkSize; y++){
-				for(int x = 0; x < chunkSize; x++){
-
-					float amplitude = 1;
-					float frequency = 1;
-					float noisechunckSize = 0;
-
-
-					for(int i = 0; i < octaves;i++){
-
-						float sampleX = (x-halfchunckSize) / scale * frequency + octavesOffsets[i].X * frequency;
-						float sampleY = (y-halfchunckSize) / scale * frequency + octavesOffsets[i].Y * frequency;
-
-						float perlinValue = noise.GetNoise2D(sampleX, sampleY) * 2 - 1;
-
-						noisechunckSize += perlinValue * amplitude;
-
-						amplitude *= noiseParams.Persistance;
-						frequency *= noiseParams.Lacunarity;
-					}
-
-					if(noisechunckSize > maxNoisechunckSize){
-						maxNoisechunckSize = noisechunckSize;
-					}
-					else if( noisechunckSize < minNoisechunckSize){
-						minNoisechunckSize = noisechunckSize;
-					}
-
-					noiseMap[x,y] = noisechunckSize;
-				}
-			}
-
-			for(int y = 0; y < chunkSize; y++){
-				for(int x = 0; x < chunkSize; x++){
-					noiseMap[x,y] = Mathf.InverseLerp(minNoisechunckSize, maxNoisechunckSize, noiseMap[x,y]);
-				}
-			}
-
-			return noiseMap;
-		}
-
-		public static float[,] GenerateNoiseMap(float scale, int octaves, float persistance, float lacunarity, int seed, int chunkSize, Vector2 offset){
+		public enum NormalizeMode {Local, Global};
+		public static float[,] GenerateNoiseMap(float scale, int octaves, float persistance, float lacunarity, int seed, int chunkSize, Vector2 offset, NormalizeMode mode){
 
 			Random prng = new(seed);
 			
@@ -87,15 +15,22 @@ namespace Utility{
                 NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin,
             };
 
+			float maxPossibleHeight = 0f;
+			float amplitude = 1;
+			float frequency = 1;
+
 			Vector2[] octavesOffsets = new Vector2[octaves];
 			for(int i = 0; i < octaves; i++){
 				float offsetX = prng.Next(-100000, 100000) + offset.X;
-				float offsetY = prng.Next(-100000, 100000) + offset.Y;
+				float offsetY = prng.Next(-100000, 100000) - offset.Y;
 				octavesOffsets[i] = new Vector2(offsetX, offsetY);
+
+				maxPossibleHeight += amplitude;
+				amplitude *= persistance;
 			}
 
-			float maxNoisechunckSize = float.MinValue;
-			float minNoisechunckSize = float.MaxValue;
+			float maxLocalNoisechunkSize = float.MinValue;
+			float minLocalNoisechunkSize = float.MaxValue;
 
 			float halfchunckSize = chunkSize/2f;
 
@@ -103,12 +38,11 @@ namespace Utility{
 
 			for(int y = 0; y < chunkSize; y++){
 				for(int x = 0; x < chunkSize; x++){
-
-					float amplitude = 1;
-					float frequency = 1;
-					float noisechunckSize = 0;
-
-
+					
+					amplitude = 1;
+			 		frequency = 1;
+					float noisechunkSize = 0;
+					
 					for(int i = 0; i < octaves;i++){
 
 						float sampleX = (x-halfchunckSize) / scale * frequency + octavesOffsets[i].X * frequency;
@@ -116,30 +50,41 @@ namespace Utility{
 
 						float perlinValue = noise.GetNoise2D(sampleX, sampleY) * 2 - 1;
 
-						noisechunckSize += perlinValue * amplitude;
+						noisechunkSize += perlinValue * amplitude;
 
 						amplitude *= persistance;
 						frequency *= lacunarity;
 					}
 
-					if(noisechunckSize > maxNoisechunckSize){
-						maxNoisechunckSize = noisechunckSize;
+					if(noisechunkSize > maxLocalNoisechunkSize){
+						maxLocalNoisechunkSize = noisechunkSize;
 					}
-					else if( noisechunckSize < minNoisechunckSize){
-						minNoisechunckSize = noisechunckSize;
+					else if( noisechunkSize < minLocalNoisechunkSize){
+						minLocalNoisechunkSize = noisechunkSize;
 					}
 
-					noiseMap[x,y] = noisechunckSize;
+					noiseMap[x,y] = noisechunkSize;
 				}
 			}
 
 			for(int y = 0; y < chunkSize; y++){
 				for(int x = 0; x < chunkSize; x++){
-					noiseMap[x,y] = Mathf.InverseLerp(minNoisechunckSize, maxNoisechunckSize, noiseMap[x,y]);
+
+					if(mode == NormalizeMode.Local){
+						noiseMap[x,y] = Mathf.InverseLerp(minLocalNoisechunkSize, maxLocalNoisechunkSize, noiseMap[x,y]);
+						continue;
+					}
+
+					//NormalizeMode.Global
+
+					float normalizeHeight = (noiseMap[x,y] + 1) / (2f * maxPossibleHeight);
+					noiseMap[x,y] = Mathf.Clamp(normalizeHeight, -1, int.MaxValue);
+
 				}
 			}
 
 			return noiseMap;
 		}
+		
 	}
 }

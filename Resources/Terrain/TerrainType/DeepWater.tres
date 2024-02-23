@@ -5,5 +5,5 @@
 [resource]
 script = ExtResource("1_jehe7")
 name = "DeepWater"
-height = 0.2
+height = 0.0
 color = Color(0.0823529, 0.203922, 0.788235, 1)

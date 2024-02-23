@@ -1,23 +1,14 @@
-[gd_scene load_steps=14 format=3 uid="uid://cmxauf6d32bqc"]
+[gd_scene load_steps=13 format=3 uid="uid://cmxauf6d32bqc"]
 
-[ext_resource type="Texture2D" uid="uid://yhc1sdtgm7eo" path="res://NoiseImages/TerrainImage.png" id="1_1igb2"]
 [ext_resource type="Script" path="res://Scripts/Terrain/TerrainGenerator.cs" id="1_cofat"]
 [ext_resource type="Material" uid="uid://cwx22c57o1n7c" path="res://Materials/DefaultTerrainMat.tres" id="2_5hvmj"]
+[ext_resource type="Resource" uid="uid://ew2jwmi0qs08" path="res://Resources/Terrain/NoiseMap/DefaulNoiseMapParams.tres" id="2_8hyjh"]
 [ext_resource type="Resource" uid="uid://cyt1hemxhrikx" path="res://Resources/Terrain/LODInfoGroup.tres" id="2_73ohs"]
+[ext_resource type="Resource" uid="uid://7b8egm6332hu" path="res://Resources/Terrain/LandmassTerrainGroup.tres" id="2_mar0v"]
 [ext_resource type="PackedScene" uid="uid://dyasv1hd73pxi" path="res://Scenes/Player/Player.tscn" id="3_xergi"]
 [ext_resource type="PackedScene" uid="uid://cy4lr8ik7k20r" path="res://Scenes/Player/camera_controller.tscn" id="4_u6udd"]
 [ext_resource type="Script" path="res://Scripts/Terrain/EndlessTerrain.cs" id="4_vyv3m"]
 [ext_resource type="Script" path="res://Scripts/Utility/DrawController.gd" id="7_0hr5j"]
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_w1h8t"]
-size = Vector2(257, 257)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qv2t1"]
-resource_local_to_scene = true
-albedo_texture = ExtResource("1_1igb2")
-texture_filter = 2
-texture_repeat = false
-distance_fade_max_distance = 0.0
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_p2jbf"]
 sky_top_color = Color(0.145098, 0.364706, 1, 1)
@@ -37,12 +28,11 @@ sky = SubResource("Sky_162kg")
 [node name="TerrainGenerator" type="MeshInstance3D" parent="."]
 visible = false
 lod_bias = 0.001
-mesh = SubResource("PlaneMesh_w1h8t")
 skeleton = NodePath("")
-surface_material_override/0 = SubResource("StandardMaterial3D_qv2t1")
 script = ExtResource("1_cofat")
 Draw_Mode = 1
-MeshHeightMultiplier = 90.0
+NoiseParams = ExtResource("2_8hyjh")
+Terrains = ExtResource("2_mar0v")
 
 [node name="EndlessTerrainGenerator" type="Node3D" parent="." node_paths=PackedStringArray("viewer")]
 script = ExtResource("4_vyv3m")
@@ -64,7 +54,7 @@ environment = SubResource("Environment_7ci86")
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 350, 0)
 
 [node name="Player" parent="." instance=ExtResource("3_xergi")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3926, 213.362, -0.101583)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.3926, 5.362, -15.1016)
 gravity_scale = 0.0
 MovementSpeed = 3000.0
 

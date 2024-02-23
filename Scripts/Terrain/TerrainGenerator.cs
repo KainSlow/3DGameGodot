@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Threading;
 using System.Collections.Generic;
+using Utility;
 
 
 [Tool]
@@ -26,6 +27,7 @@ public partial class TerrainGenerator : MeshInstance3D
         drawMode = value;
         OnVariableChanged();
     }}
+    [Export] public NoiseGenerator.NormalizeMode normalizeMode;
 
     [Export(PropertyHint.Range, "0, 8, 1, min, max")] 
     public int EditorLevelOfDetal{get => editorLevelOfDetal; set{
@@ -35,11 +37,11 @@ public partial class TerrainGenerator : MeshInstance3D
     [Export] bool AutoGenerate{get => isSubscribed; set{
 
         isSubscribed = value;
-
-        if(value){
+        
+        if(value && Engine.IsEditorHint()){
             NoiseParams.OnValidated += OnVariableChanged;
         }
-        else{
+        else if(!value && Engine.IsEditorHint()){
             NoiseParams.OnValidated -= OnVariableChanged;
         }
         
@@ -66,9 +68,11 @@ public partial class TerrainGenerator : MeshInstance3D
     }} 
     [Export] Curve MeshHeightCurve {get; set;} = ResourceLoader.Load<Curve>("res://Resources/Terrain/HeightCurve.tres");
     
-    [Export] public NoiseMapParams NoiseParams {get; set;} = ResourceLoader.Load<NoiseMapParams>("res://Resources/Terrain/NoiseMap/DefaulNoiseMapParams.tres");
+    [Export] public NoiseMapParams NoiseParams;
 
-    [Export] public TerrainGroup Terrains{get; set;} = ResourceLoader.Load<TerrainGroup>("res://Resources/Terrain/DefaultTerrainGroup.tres");
+    [Export] public TerrainGroup Terrains;
+
+    
 
     #endregion
     #region Godot Main Thread
@@ -79,7 +83,8 @@ public partial class TerrainGenerator : MeshInstance3D
         Visible = false;
         //OnVariableChanged();
 
-
+        NoiseParams??= new NoiseMapParams();
+        Terrains??= new TerrainGroup();
 	}
 
     public override void _Process(double delta)
@@ -122,9 +127,6 @@ public partial class TerrainGenerator : MeshInstance3D
 
         lock (meshDataThreadInfoQueue){
             
-            if(meshData == null){
-                GD.Print("enqueue null mesh data");
-            }
             meshDataThreadInfoQueue.Enqueue(new MapThreadInfo<MeshData>(callback, meshData));
         }
     }
@@ -142,12 +144,7 @@ public partial class TerrainGenerator : MeshInstance3D
             for(int i = 0; i < meshDataThreadInfoQueue.Count; i++){
                 MapThreadInfo<MeshData> threadInfo = meshDataThreadInfoQueue.Dequeue();
 
-                if(threadInfo.callBack == null){
-                    GD.Print("dequeue null mesh data");
-                }
-                else{
-                    threadInfo.callBack(threadInfo.parameter);
-                }
+                threadInfo.callBack(threadInfo.parameter);
             }
         }    
     }
@@ -166,7 +163,7 @@ public partial class TerrainGenerator : MeshInstance3D
     }
     private void SetImageTexture(){
 
-        if(Mesh == null){ GD.Print("No Mesh Found"); return; }
+        if(Mesh == null) return;
 
         var material = GetSurfaceOverrideMaterial(0);
 
@@ -180,6 +177,9 @@ public partial class TerrainGenerator : MeshInstance3D
     public void OnVariableChanged(){
 
         if(!Engine.IsEditorHint()) return;
+        
+        NoiseParams??= new NoiseMapParams();
+        Terrains??= new TerrainGroup();
 
         DrawMapInEditor();
         SetImageTexture();
@@ -192,9 +192,7 @@ public partial class TerrainGenerator : MeshInstance3D
     }
     private float[,] GenerateNoiseMap(Vector2 additionalOffset){
 
-
-        //float[,] noiseMap = Utility.NoiseGenerator.GenerateNoiseMap((NoiseMapParams)NoiseParams.Duplicate(), mapChunkSize, additionalOffset);
-        float[,] noiseMap = Utility.NoiseGenerator.GenerateNoiseMap(NoiseParams.Scale, NoiseParams.Octaves, NoiseParams.Persistance, NoiseParams.Lacunarity, NoiseParams.Seed, mapChunkSize, NoiseParams.Offset +additionalOffset);
+        float[,] noiseMap = Utility.NoiseGenerator.GenerateNoiseMap(NoiseParams.Scale, NoiseParams.Octaves, NoiseParams.Persistance, NoiseParams.Lacunarity, NoiseParams.Seed, mapChunkSize, NoiseParams.Offset + additionalOffset, normalizeMode);
 
         if(Engine.IsEditorHint()){
 
@@ -222,8 +220,10 @@ public partial class TerrainGenerator : MeshInstance3D
 
                 for(int i = 0; i < Terrains.regions.Length; i++){
                     
-                    if(currentHeight <= Terrains.regions[i].height){
+                    if(currentHeight >= Terrains.regions[i].height){
                         colorMap[y * mapChunkSize + x] = Terrains.regions[i].color;
+                    }
+                    else{
                         break;
                     }
 

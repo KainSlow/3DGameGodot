@@ -1,7 +1,7 @@
 using Godot;
 
-[GlobalClass]
 [Tool]
+[GlobalClass]
 public partial class LODInfo : Resource
 {
     [Export] public int lod;

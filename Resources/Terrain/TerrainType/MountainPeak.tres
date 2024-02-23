@@ -5,5 +5,5 @@
 [resource]
 script = ExtResource("1_yb7ri")
 name = "MountainPeak"
-height = 1.0
+height = 0.8
 color = Color(0.929412, 0.952941, 1, 1)

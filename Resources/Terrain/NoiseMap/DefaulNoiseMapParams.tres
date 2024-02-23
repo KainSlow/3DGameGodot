@@ -3,10 +3,11 @@
 [ext_resource type="Script" path="res://Scripts/Terrain/NoiseMapParams.cs" id="1_jq2jg"]
 
 [resource]
+resource_local_to_scene = true
 script = ExtResource("1_jq2jg")
-Scale = 60.0
-Octaves = 5
-Persistance = 0.5
+Scale = 30.0
+Octaves = 10
+Persistance = 0.565
 Lacunarity = 1.5
-Seed = 1234
+Seed = 0
 Offset = Vector2(0, 0)

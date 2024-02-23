@@ -11,7 +11,7 @@ public partial class EndlessTerrain : Node3D {
 	int chunkSize;
 	int chunkVisibleInViewDst;
 	Dictionary<Vector2, TerrainChunk> terrainChunkDictionary = new();
-	List<TerrainChunk> terrainChunksVisibleLastUpdate = new();
+	static List<TerrainChunk> terrainChunksVisibleLastUpdate = new();
 	[Export] LODInfoGroup detailLevels;
 	[Export] static float maxViewDst = 1000;
 
@@ -67,9 +67,12 @@ public partial class EndlessTerrain : Node3D {
 
 					terrainChunkDictionary[viewedChunkCoord].UpdateTerrainChunk();
 
+					/*
 					if(terrainChunkDictionary[viewedChunkCoord].IsVisible()){
 						terrainChunksVisibleLastUpdate.Add(terrainChunkDictionary[viewedChunkCoord]);
 					}
+					*/
+
 				}
 				else{
 
@@ -107,7 +110,8 @@ public partial class EndlessTerrain : Node3D {
                     Size = new Vector2(size, size)
                 },
 
-                Position = positionV3
+                Position = positionV3,
+
             };
 
 			Material localMat = (Material)material.Duplicate();
@@ -146,6 +150,8 @@ public partial class EndlessTerrain : Node3D {
 			
 			bool visible = viewerDstFromNearestEdge <= maxViewDst;
 
+			SetVisible(visible);
+
 			if(!visible)return;
 
 			int lodIndex = 0;
@@ -173,9 +179,9 @@ public partial class EndlessTerrain : Node3D {
 					lodMesh.RequestMesh(mapData);
 				}
 			}
-			
 
-			SetVisible(visible);
+			terrainChunksVisibleLastUpdate.Add(this);
+
 		}
 
 		public void SetVisible(bool visible){

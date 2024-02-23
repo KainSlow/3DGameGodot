@@ -5,5 +5,5 @@
 [resource]
 script = ExtResource("1_swpn4")
 name = "Water"
-height = 0.4
+height = 0.2
 color = Color(0.117647, 0.352941, 0.807843, 1)

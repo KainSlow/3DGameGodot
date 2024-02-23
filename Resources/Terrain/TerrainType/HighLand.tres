@@ -5,5 +5,5 @@
 [resource]
 script = ExtResource("1_5oxu2")
 name = "HighLand"
-height = 0.7
+height = 0.6
 color = Color(0.0784314, 0.639216, 0.262745, 1)

@@ -1,8 +1,8 @@
 using Godot;
 using System;
 
-[GlobalClass]
 [Tool]
+[GlobalClass]
 public partial class LODInfoGroup : Resource
 {
     [Export] public LODInfo[] LODInfos;

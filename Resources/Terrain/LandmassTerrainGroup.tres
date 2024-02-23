@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="TerrainGroup" load_steps=9 format=3 uid="uid://7b8egm6332hu"]
+
+[ext_resource type="Resource" uid="uid://bod3ubhri51xv" path="res://Resources/Terrain/TerrainType/DeepWater.tres" id="1_m1x05"]
+[ext_resource type="Script" path="res://Scripts/Terrain/TerrainGroup.cs" id="2_dfhnq"]
+[ext_resource type="Resource" uid="uid://sggh0abiy26i" path="res://Resources/Terrain/TerrainType/Water.tres" id="2_f8f8f"]
+[ext_resource type="Resource" uid="uid://b3u0f5aw68j6" path="res://Resources/Terrain/TerrainType/Coast.tres" id="3_odaqc"]
+[ext_resource type="Resource" uid="uid://dt326n8y18pqv" path="res://Resources/Terrain/TerrainType/Land.tres" id="4_f1ojq"]
+[ext_resource type="Resource" uid="uid://b1fym6ievmyce" path="res://Resources/Terrain/TerrainType/HighLand.tres" id="5_72rwg"]
+[ext_resource type="Resource" uid="uid://djxlhj47v32ss" path="res://Resources/Terrain/TerrainType/Mountain.tres" id="6_v54uv"]
+[ext_resource type="Resource" uid="uid://b2mfeuak0intj" path="res://Resources/Terrain/TerrainType/MountainPeak.tres" id="7_bi1sk"]
+
+[resource]
+script = ExtResource("2_dfhnq")
+regions = [ExtResource("1_m1x05"), ExtResource("2_f8f8f"), ExtResource("3_odaqc"), ExtResource("4_f1ojq"), ExtResource("5_72rwg"), ExtResource("6_v54uv"), ExtResource("7_bi1sk")]
